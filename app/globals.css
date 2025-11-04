@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    overflow-x: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  body.light-mode {
+    background-color: #ffffff;
+    color: #0a0a0a;
+  }
+
+  /* Custom text selection colors - Cyber Green theme */
+  ::selection {
+    background-color: rgba(0, 255, 136, 0.3); /* Cyber Green with transparency */
+    color: #ffffff;
+  }
+
+  ::-moz-selection {
+    background-color: rgba(0, 255, 136, 0.3); /* Firefox */
+    color: #ffffff;
+  }
+
+  body.light-mode ::selection {
+    background-color: rgba(0, 255, 136, 0.4); /* Slightly more opaque for light mode */
+    color: #0a0a0a;
+  }
+
+  body.light-mode ::-moz-selection {
+    background-color: rgba(0, 255, 136, 0.4); /* Firefox light mode */
+    color: #0a0a0a;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(2, 27, 35, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(10, 182, 188, 0.2);
+  }
+  
+  .gradient-glow {
+    background: linear-gradient(135deg, #0AB6BC 0%, #045C43 100%);
+    box-shadow: 0 0 20px rgba(10, 182, 188, 0.5),
+                0 0 40px rgba(10, 182, 188, 0.3);
+  }
+  
+  .neon-glow {
+    box-shadow: 0 0 10px rgba(0, 255, 198, 0.5),
+                0 0 20px rgba(0, 255, 198, 0.3),
+                0 0 30px rgba(0, 255, 198, 0.1);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, #00FF88 0%, #00cc6a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  
+  .cyber-glow {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3),
+                0 0 40px rgba(0, 255, 136, 0.2),
+                0 0 60px rgba(0, 255, 136, 0.1);
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-card-light {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .spotlight {
+    background: radial-gradient(
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(10, 182, 188, 0.1) 0%,
+      transparent 50%
+    );
+  }
+  
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
