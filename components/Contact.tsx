@@ -127,7 +127,7 @@ export default function Contact() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12 md:mb-16"
           >
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 text-gradient">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-gradient">
               Let&apos;s Connect
             </h2>
             <p className="text-xl md:text-2xl lg:text-3xl text-secondary max-w-3xl mx-auto font-light">

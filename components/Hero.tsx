@@ -11,7 +11,7 @@ const techBadges = ["Django", "React", "Next.js", "Flutter", "PostgreSQL", "DevO
 export default function Hero() {
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark">
       {/* Morphing 3D Blob Background */}
       <MorphingBlob />
 
@@ -29,7 +29,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mb-8"
           >
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-4">
+            <h1 className="text-5xl md:text-5xl lg:text-6xl font-bold mb-4">
               <TextScramble
                 text="Hamse Mohamed Ismail"
                 className="text-inverse"

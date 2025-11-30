@@ -64,7 +64,7 @@ export default function About() {
             transition={{ duration: 0.8 }}
             className="text-center mb-20"
           >
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 text-gradient tracking-wide">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-gradient tracking-wide">
               About Me
             </h2>
             <p className="text-xl md:text-2xl lg:text-3xl text-secondary max-w-3xl mx-auto font-light">

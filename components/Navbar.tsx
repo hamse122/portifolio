@@ -6,9 +6,11 @@ import { useTheme } from "./ThemeContext";
 import Image from "next/image";
 
 const navItems = [
-  { name: "Work", href: "#projects" },
+  { name: "Home", href: "/" },
   { name: "About", href: "#about" },
-  { name: "Playground", href: "#skills" },
+  { name: "Work", href: "#projects" },
+  { name: "Skills", href: "#skills" },
+  { name: "Pricing", href: "/pricing" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -24,7 +26,9 @@ export default function Navbar() {
       setScrolled(scrollY > 20);
 
       // Determine active section based on scroll position
-      const sections = navItems.map((item) => item.href.substring(1));
+      const sections = navItems
+        .map((item) => item.href.substring(1))
+        .filter((section) => section && !section.startsWith('/'));
       let currentSection = "";
 
       sections.forEach((section) => {
@@ -43,6 +47,34 @@ export default function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
     handleScroll(); // Initial check
+    
+    // Handle hash navigation on page load
+    if (window.location.hash) {
+      const hash = window.location.hash.substring(1);
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          const navbarWrapper = document.querySelector('div[class*="fixed top-0"]');
+          let offset = 100;
+          
+          if (navbarWrapper) {
+            const navbarRect = navbarWrapper.getBoundingClientRect();
+            if (navbarRect) {
+              offset = navbarRect.bottom + 40;
+            }
+          }
+
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          });
+        }
+      }, 100);
+    }
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -64,27 +96,48 @@ export default function Navbar() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     
-    // Check if it's a page route (like /contact)
+    // Handle home page navigation
+    if (href === '/') {
+      if (window.location.pathname === '/') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.location.href = '/';
+      }
+      setIsOpen(false);
+      return;
+    }
+    
+    // Check if it's a page route (like /contact, /pricing)
     if (href.startsWith('/')) {
       window.location.href = href;
+      setIsOpen(false);
       return;
     }
 
-    // Remove # from href to get section ID
+    // Handle section links (like #about, #projects)
     const sectionId = href.substring(1);
+    
+    // If we're on a different page, navigate to home first with hash
+    if (window.location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      setIsOpen(false);
+      return;
+    }
+
+    // We're on the home page, scroll to section
     const element = document.getElementById(sectionId);
 
     if (element) {
-      // Calculate navbar height - navbar wrapper has pt-6 md:pt-8 (24px/32px) + navbar height
+      // Calculate navbar height - navbar wrapper has pt-3 md:pt-4 (12px/16px) + navbar height
       const navbarWrapper = document.querySelector('div[class*="fixed top-0"]');
-      let offset = 140; // Default offset for nice spacing
+      let offset = 100; // Default offset for nice spacing
       
       if (navbarWrapper) {
         const navbarRect = navbarWrapper.getBoundingClientRect();
         if (navbarRect) {
           // Total height = navbar bottom position + extra spacing for visual breathing room
           // This ensures section headings appear nicely below the navbar
-          offset = navbarRect.bottom + 60; // 60px spacing after navbar
+          offset = navbarRect.bottom + 40; // 40px spacing after navbar
         }
       }
 
@@ -102,16 +155,16 @@ export default function Navbar() {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 flex justify-center pt-6 px-4 md:pt-8">
+    <div className="fixed top-0 left-0 right-0 z-40 flex justify-center pt-3 px-4 md:pt-4">
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative w-full max-w-7xl"
+        className="relative w-full max-w-4xl"
       >
         {/* Main Navigation Bar */}
         <motion.div
-          className="relative rounded-2xl px-4 md:px-6 py-4 flex items-center justify-between glass-card border border-border"
+          className="relative rounded-full px-4 md:px-6 py-2 flex items-center justify-between glass-card border border-border"
           animate={{
             boxShadow: scrolled
               ? "0 8px 32px rgba(0, 255, 136, 0.1)"
@@ -121,21 +174,27 @@ export default function Navbar() {
         >
           {/* Logo */}
           <motion.a
-            href="/#hero"
+            href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              // If we're on the home page, scroll to top
+              if (window.location.pathname === '/') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                // Otherwise, navigate to home page
+                window.location.href = '/';
+              }
             }}
             className="flex items-center gap-3 group cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex items-center justify-center">
+            <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex items-center justify-center">
               <Image
                 src="https://i.postimg.cc/Hs6q84GY/Chat-GPT-Image-Nov-3-2025-12-05-20-AM.png"
                 alt="Hamse Mohamed Ismail Logo"
-                width={48}
-                height={48}
+                width={40}
+                height={40}
                 className="object-cover w-full h-full"
                 priority
               />
@@ -143,7 +202,7 @@ export default function Navbar() {
           </motion.a>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-6 flex-1 justify-center">
+          <div className="hidden md:flex items-center gap-4 flex-1 justify-center">
             {navItems.map((item) => {
               const isActive = activeItem === item.href.substring(1);
               return (
@@ -151,7 +210,7 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="relative text-sm font-medium transition-colors text-secondary hover:text-cyber-green group cursor-pointer"
+                  className="relative text-xs md:text-sm font-medium transition-colors text-secondary hover:text-cyber-green group cursor-pointer"
                   onMouseEnter={() => setActiveItem(item.href.substring(1))}
                   whileHover={{ x: 5 }}
                 >
@@ -171,28 +230,26 @@ export default function Navbar() {
           {/* Right Side Actions - Theme Toggle */}
           <div className="hidden md:flex items-center gap-3">
             {/* Theme Toggle Button */}
-            <motion.button
+            <button
               onClick={toggleTheme}
-              className="w-10 h-10 rounded-lg glass-card border border-border flex items-center justify-center text-secondary hover:border-cyber-green hover:text-cyber-green transition-all"
+              className="w-8 h-8 md:w-9 md:h-9 rounded-lg glass-card border border-border flex items-center justify-center text-secondary hover:border-cyber-green hover:text-cyber-green transition-all"
               aria-label="Toggle theme"
-              whileHover={{ scale: 1.15, rotate: 360 }}
-              whileTap={{ scale: 0.9 }}
             >
               {theme === "dark" ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.75 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5h-2.25a.75.75 0 01-.75-.75zM12 18.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zM5.25 12a.75.75 0 01-.75.75H2.25a.75.75 0 010-1.5H4.5a.75.75 0 01.75.75zM12 5.25a.75.75 0 01.75-.75V2.25a.75.75 0 011.5 0v2.25a.75.75 0 01-.75.75zM18.75 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5h-2.25a.75.75 0 01-.75-.75z" />
                 </svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" />
                 </svg>
               )}
-            </motion.button>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden relative w-8 h-8 flex items-center justify-center text-secondary hover:text-cyber-green transition-colors"
+            className="md:hidden relative w-7 h-7 flex items-center justify-center text-secondary hover:text-cyber-green transition-colors"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -250,7 +307,7 @@ export default function Navbar() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: "-100%", opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="md:hidden fixed top-20 left-4 right-4 z-50 rounded-2xl glass-card border border-border"
+                className="md:hidden fixed top-16 left-4 right-4 z-50 rounded-2xl glass-card border border-border"
               >
                 <div className="p-6 flex flex-col gap-4">
                   {navItems.map((item, index) => {
@@ -287,14 +344,10 @@ export default function Navbar() {
                   })}
 
                   {/* Theme Toggle in Mobile Menu */}
-                  <motion.button
+                  <button
                     onClick={toggleTheme}
                     className="mt-2 px-5 py-3 rounded-lg glass-card border border-border font-medium text-sm flex items-center justify-center gap-2 text-secondary hover:border-cyber-green hover:text-cyber-green transition-all"
                     aria-label="Toggle theme"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: navItems.length * 0.1 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     {theme === "dark" ? (
                       <>
@@ -311,7 +364,7 @@ export default function Navbar() {
                         <span>Dark Mode</span>
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             </>

@@ -10,7 +10,8 @@ const footerLinks = [
   { name: "About", href: "#about" },
   { name: "Projects", href: "#projects" },
   { name: "Skills", href: "#skills" },
-  { name: "Contact", href: "#contact" },
+  { name: "Pricing", href: "/pricing" },
+  { name: "Contact", href: "/contact" },
 ];
 
 const socialLinks = [
@@ -111,7 +112,46 @@ export default function Footer() {
                   <motion.a
                     key={link.name}
                     href={link.href}
-                    className="text-secondary hover:text-cyber-green transition-colors relative group w-fit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      
+                      // Handle page routes (like /contact, /pricing)
+                      if (link.href.startsWith('/')) {
+                        window.location.href = link.href;
+                        return;
+                      }
+                      
+                      const sectionId = link.href.substring(1);
+                      
+                      // If we're on a different page, navigate to home with hash
+                      if (pathname !== '/') {
+                        window.location.href = `/${link.href}`;
+                        return;
+                      }
+
+                      // We're on the home page, scroll to section
+                      const element = document.getElementById(sectionId);
+                      if (element) {
+                        const navbarWrapper = document.querySelector('div[class*="fixed top-0"]');
+                        let offset = 100;
+                        
+                        if (navbarWrapper) {
+                          const navbarRect = navbarWrapper.getBoundingClientRect();
+                          if (navbarRect) {
+                            offset = navbarRect.bottom + 40;
+                          }
+                        }
+
+                        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - offset;
+
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: 'smooth',
+                        });
+                      }
+                    }}
+                    className="text-secondary hover:text-cyber-green transition-colors relative group w-fit cursor-pointer"
                     whileHover={{ x: 10 }}
                   >
                     {link.name}
